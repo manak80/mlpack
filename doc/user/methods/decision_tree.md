@@ -464,7 +464,7 @@ class CustomNumericSplit
    and has complexity `O(n)`, where `n` is the number of samples.
  * `BestBinaryCategoricalSplit` is the preferred algorithm of
    [the CART system](https://www.taylorfrancis.com/books/mono/10.1201/9781315139470/classification-regression-trees-leo-breiman-jerome-friedman-olshen-charles-stone).
-   It will find the the best (entropy-minimizing) binary partition of the
+   It will find the  best (entropy-minimizing) binary partition of the
    categories. This algorithm has complexity `O(n lg n)` in the case of binary
    outcomes, but is exponential in the number of _categories_ when there are
    more than two _classes_.~
