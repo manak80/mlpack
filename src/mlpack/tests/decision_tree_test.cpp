@@ -1852,3 +1852,37 @@ TEST_CASE("DifferentMaximumDepthTest", "[DecisionTreeTest]")
   REQUIRE(d2.Child(0).NumChildren() == 2);
   REQUIRE(d2.Child(1).NumChildren() == 2);
 }
+/**
+ * Ensure that DecisionTree builds a single-level decision stump when
+ * NoRecursion is true alongside a custom DimensionSelectionType.
+ */
+TEST_CASE("DecisionTreeCustomDimensionNoRecursionTest", "[DecisionTreeTest]")
+{
+  // Simple 2D dataset with 4 points and 2 classes.
+  arma::mat data("0.0 0.0 1.0 1.0;"
+                 "0.0 1.0 0.0 1.0");
+  arma::Row<size_t> labels("0 0 1 1");
+
+  // Local custom dimension selector that evaluates dimension 0 only.
+  class SingleDimensionSelect
+  {
+   public:
+    SingleDimensionSelect() : dim(0) { }
+    size_t Begin() { dim = 0; return dim; }
+    size_t Next() { dim = 1; return dim; }
+    size_t End() const { return 1; }
+
+   private:
+    size_t dim;
+  };
+
+  // Instantiate DecisionTree with NoRecursion = true.
+  DecisionTree<GiniGain, BestBinaryNumericSplit, AllCategoricalSplit,
+      SingleDimensionSelect, true> tree(data, labels, 2, 1 /* minLeafSize */);
+
+  // Because NoRecursion is true, the root splits once into leaf children.
+  REQUIRE(tree.NumChildren() == 2);
+  REQUIRE(tree.Child(0).NumChildren() == 0);
+  REQUIRE(tree.Child(1).NumChildren() == 0);
+}
+
